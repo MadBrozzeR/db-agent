@@ -1,10 +1,11 @@
 const EMPTY = require('../constants.js').EMPTY;
 const CONST = require('../constants.js').CONST;
 const Column = require('./column.js');
+const Parameter = require('./parameter.js');
 
 const REPLACEMENT = /\$S/g;
 
-module.exports = function Condition (args, params = EMPTY) {
+function Condition (args, params = EMPTY) {
   this.sql = CONST.EMPTY;
   this.params = [];
   const glue = params.glue;
@@ -34,3 +35,42 @@ module.exports = function Condition (args, params = EMPTY) {
     }
   }
 };
+
+module.exports = Condition;
+
+Column.prototype.eq = function (param) {
+  return new Condition([this, new Parameter(param, this.type)], {glue: ' = '});
+};
+Column.prototype.lt = function (param) {
+  return new Condition([this, new Parameter(param, this.type)], {glue: ' < '});
+};
+Column.prototype.lte = function (param) {
+  return new Condition([this, new Parameter(param, this.type)], {glue: ' <= '});
+};
+Column.prototype.gt = function (param) {
+  return new Condition([this, new Parameter(param, this.type)], {glue: ' > '});
+};
+Column.prototype.gte = function (param) {
+  return new Condition([this, new Parameter(param, this.type)], {glue: ' >= '});
+};
+Column.prototype.ne = function (param) {
+  return new Condition([this, new Parameter(param, this.type)], {glue: ' <> '});
+};
+Column.prototype.like = function (param) {
+  return new Condition([this, new Parameter(param, this.type)], {glue: ' LIKE '});
+};
+Column.prototype.between = function (param1, param2) {
+  return new Condition([
+    this,
+    and(
+      new Parameter(param1, this.type),
+      new Parameter(param2, this.type)
+    )
+  ], {glue: ' BETWEEN '});
+}
+Column.prototype.isNull = function () {
+  return new Condition(this.toString() + ' IS NULL');
+}
+Column.prototype.isNotNull = function () {
+  return new Condition(this.toString() + ' IS NOT NULL');
+}

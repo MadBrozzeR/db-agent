@@ -1,5 +1,4 @@
 const EMPTY = require('../constants.js').EMPTY;
-const Condition = require('./condition.js');
 const Parameter = require('./parameter.js');
 const and = require('../index.js').and;
 
@@ -25,6 +24,9 @@ function Column (table, name, props = EMPTY) {
     };
   }
 }
+
+module.exports = Column;
+
 Column.prototype.toFullString = function () {
   const column = this.ref || this;
   let stack = [
@@ -64,42 +66,6 @@ Column.prototype.drop = function () {
 Column.prototype.toString = function (short) {
   return (short ? '`' : ('`' + this.table.name + '`.`')) + this.name + '`';
 };
-Column.prototype.eq = function (param) {
-  return new Condition([this, new Parameter(param, this.type)], {glue: ' = '});
-};
-Column.prototype.lt = function (param) {
-  return new Condition([this, new Parameter(param, this.type)], {glue: ' < '});
-};
-Column.prototype.lte = function (param) {
-  return new Condition([this, new Parameter(param, this.type)], {glue: ' <= '});
-};
-Column.prototype.gt = function (param) {
-  return new Condition([this, new Parameter(param, this.type)], {glue: ' > '});
-};
-Column.prototype.gte = function (param) {
-  return new Condition([this, new Parameter(param, this.type)], {glue: ' >= '});
-};
-Column.prototype.ne = function (param) {
-  return new Condition([this, new Parameter(param, this.type)], {glue: ' <> '});
-};
-Column.prototype.like = function (param) {
-  return new Condition([this, new Parameter(param, this.type)], {glue: ' LIKE '});
-};
-Column.prototype.between = function (param1, param2) {
-  return new Condition([
-    this,
-    and(
-      new Parameter(param1, this.type),
-      new Parameter(param2, this.type)
-    )
-  ], {glue: ' BETWEEN '});
-}
-Column.prototype.isNull = function () {
-  return new Condition(this.toString() + ' IS NULL');
-}
-Column.prototype.isNotNull = function () {
-  return new Condition(this.toString() + ' IS NOT NULL');
-}
 Column.prototype.asc = function () {
   return this.toString() + ' ASC';
 }
@@ -112,5 +78,3 @@ Column.prototype.max = function () {
 Column.prototype.min = function () {
   return 'MIN(' + this.toString() + ')';
 }
-
-module.exports = Column;

@@ -1,6 +1,6 @@
 {
   "name": "db-agent",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Agent for mbr-mysql database client",
   "main": "index.js",
   "scripts": {

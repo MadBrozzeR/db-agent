@@ -23,5 +23,8 @@ module.exports.xor = function () {
 module.exports.count = function (column) {
   return column && 'COUNT(' + column.toString() + ')';
 };
+module.exports.length = function (column) {
+  return column && 'LENGTH(' + column.toString() + ')';
+};
 module.exports.Types = Types;
 module.exports.Transaction = Transaction;

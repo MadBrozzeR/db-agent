@@ -18,7 +18,8 @@ function Statement (sql, params, oneResult) {
 Statement.prototype.execute = function (connection, params = EMPTY) {
   if (this.params) {
     const statement = connection.prepare(this.sql, {
-      onError: params.onError
+      onError: params.onError,
+      onSuccess: function (result) {console.log(result)}
     });
     if (this.oneResult) {
       statement.execute(this.params, {
@@ -35,16 +36,15 @@ Statement.prototype.execute = function (connection, params = EMPTY) {
         iterate(paramSet, function (param, index) {
           if (param instanceof Parameter) {
             if (param.type in BLOB_TYPES) {
-              statementParams[index] = '';
               statement.sendLongData(index, param.value, {
                 chunkSize: connection.options.maxPacketSize,
                 onError: params.onError
               });
             } else {
-              statementParams[index] = param.value;
+              statementParams.push(param.value);
             }
           } else {
-            statementParams[index] = param;
+            statementParams.push(param);
             console.warn('parameter is not an instance of Parameter', param);
           }
         });
