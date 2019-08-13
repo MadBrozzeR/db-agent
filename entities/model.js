@@ -21,8 +21,12 @@ Model.prototype.select = function (selector, props = EMPTY) {
   let sql = 'SELECT ';
   let selects = '';
   let params = [];
-  for (let key in selector) {
-    selects += (selects ? ' , ' : '') + selector[key].toString() + ' AS `' + key + '`';
+  if (typeof selector === 'string') {
+    selects = selector;
+  } else {
+    for (let key in selector) {
+      selects += (selects ? ' , ' : '') + selector[key].toString() + ' AS `' + key + '`';
+    }
   }
   sql += selects;
   sql += ' FROM ' + this.toString();
